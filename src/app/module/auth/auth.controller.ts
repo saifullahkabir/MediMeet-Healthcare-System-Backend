@@ -1,5 +1,4 @@
-import { PatientValidation } from "./auth.validation";
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 import httpStatus from "http-status";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
@@ -7,17 +6,7 @@ import type { IRequestUser } from "./auth.interface";
 import { AuthService } from "./auth.service";
 
 const registerPatient = catchAsync(async (req: Request, res: Response) => {
-  const payload = PatientValidation.PatientRegistrationZodSchema.safeParse(
-    req.body,
-  );
-
-  if (!payload.success) {
-    console.log(payload.error.issues);
-
-    throw new Error(payload.error.issues[0].message);
-  }
-
-  const result = await AuthService.registerPatient(payload.data);
+  const result = await AuthService.registerPatient(req.body);
 
   const { accessToken, refreshToken, user, patient } = result;
 
@@ -123,38 +112,36 @@ const refreshToken = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const googleLogin = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const payload = req.body;
+const googleLogin = catchAsync(async (req: Request, res: Response) => {
+  const payload = req.body;
 
-    const result = await AuthService.googleLogin(payload);
+  const result = await AuthService.googleLogin(payload);
 
-    const { accessToken, refreshToken } = result;
+  const { accessToken, refreshToken } = result;
 
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "none",
-      maxAge: 1000 * 60 * 60 * 24, // 24 hour or 1 day
-    });
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "none",
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-    });
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: false,
+    sameSite: "none",
+    maxAge: 1000 * 60 * 60 * 24, // 24 hour or 1 day
+  });
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: false,
+    sameSite: "none",
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+  });
 
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "User logged in successfully",
-      data: {
-        accessToken,
-        refreshToken,
-      },
-    });
-  },
-);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User logged in successfully",
+    data: {
+      accessToken,
+      refreshToken,
+    },
+  });
+});
 
 export const AuthController = {
   registerPatient,
