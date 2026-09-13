@@ -20,6 +20,7 @@ import type { TokenPayload } from "google-auth-library";
 import { googleClient } from "../../lib/googleAuth";
 import crypto from "crypto";
 import { redisClient } from "../../lib/redis";
+import { transporter } from "../../lib/nodemailer";
 
 const registerPatient = async (payload: IRegisterPatientPayload) => {
   const { name, password, patient: patientData } = payload;
@@ -374,6 +375,14 @@ const forgotPassword = async (payload: IForgotPasswordPayload) => {
       type: "EX",
       value: 60 * 5,
     },
+  });
+
+  await transporter.sendMail({
+    from: config.email_sender,
+    to: isUserExist.email,
+    subject: "Forgot Password",
+    // text: `Your OTP is ${otp}`,
+    html: `<h3>Your OTP is ${otp}</h3>`,
   });
 };
 

@@ -22,9 +22,9 @@
       "complexity": {
         "noCommaOperator": "off"
       },
-	  "style": {
-		"noNonNullAssertion": "info"
-	  }
+      "style": {
+        "noNonNullAssertion": "off"
+      }
     }
   },
   "javascript": {
