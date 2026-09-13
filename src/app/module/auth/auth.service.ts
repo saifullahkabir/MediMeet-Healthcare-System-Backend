@@ -18,9 +18,11 @@ import type {
 } from "./auth.interface";
 import type { TokenPayload } from "google-auth-library";
 import { googleClient } from "../../lib/googleAuth";
-import crypto from "crypto";
+import crypto from "node:crypto";
 import { redisClient } from "../../lib/redis";
 import { transporter } from "../../lib/nodemailer";
+import ejs from "ejs";
+import path from "node:path";
 
 const registerPatient = async (payload: IRegisterPatientPayload) => {
   const { name, password, patient: patientData } = payload;
@@ -370,19 +372,35 @@ const forgotPassword = async (payload: IForgotPasswordPayload) => {
   const otp = crypto.randomInt(100000, 1000000).toString();
   const key = `forgot-password-otp:${isUserExist.email}`;
 
+  const expriationSeconds = 60 * 5;
+
   await redisClient.set(key, otp, {
     expiration: {
       type: "EX",
-      value: 60 * 5,
+      value: expriationSeconds,
     },
   });
+
+  const templatePath = path.join(
+    process.cwd(),
+    "src/app/templates/forgot-password.ejs",
+  );
+
+  const templateData = {
+    name: isUserExist.name,
+    otp,
+    expriationMinutes: expriationSeconds / 60,
+  };
+
+  const html = await ejs.renderFile(templatePath, templateData);
 
   await transporter.sendMail({
     from: config.email_sender,
     to: isUserExist.email,
     subject: "Forgot Password",
     // text: `Your OTP is ${otp}`,
-    html: `<h3>Your OTP is ${otp}</h3>`,
+    // html: `<h3>Your OTP is ${otp}</h3>`,
+    html: html,
   });
 };
 
@@ -445,6 +463,24 @@ const resetPassword = async (payload: IResetPasswordPayload) => {
   });
 
   await redisClient.del([key]);
+
+  const templatePath = path.join(
+    process.cwd(),
+    "src/app/templates/reset-password-success.ejs",
+  );
+
+  const templateData = {
+    name: isUserExist.name,
+  };
+
+  const html = await ejs.renderFile(templatePath, templateData);
+
+  await transporter.sendMail({
+    from: config.email_sender,
+    to: isUserExist.email,
+    subject: "Password changed successfully",
+    html: html,
+  });
 };
 
 export const AuthService = {
