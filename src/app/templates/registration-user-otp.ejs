@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <title>MediMeet - Password Reset OTP</title>
+    <title>MediMeet - Email Verification</title>
 
     <style>
       * {
@@ -61,16 +60,16 @@
 
       .greeting {
         margin: 0 0 16px;
+        color: #111827;
         font-size: 20px;
         font-weight: 600;
-        color: #111827;
       }
 
       .message {
         margin: 0 0 24px;
+        color: #4b5563;
         font-size: 15px;
         line-height: 1.7;
-        color: #4b5563;
       }
 
       .otp-box {
@@ -101,12 +100,28 @@
 
       .expiry {
         margin: 14px 0 0;
-        font-size: 13px;
         color: #64748b;
+        font-size: 13px;
+      }
+
+      .email-info {
+        margin: 24px 0 0;
+        padding: 14px 16px;
+        background-color: #f8fafc;
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      .email-info p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.6;
+        word-break: break-word;
       }
 
       .security-box {
-        margin-top: 28px;
+        margin-top: 24px;
         padding: 16px;
         background-color: #f8fafc;
         border-left: 4px solid #0f766e;
@@ -115,9 +130,9 @@
 
       .security-box p {
         margin: 0;
+        color: #64748b;
         font-size: 13px;
         line-height: 1.6;
-        color: #64748b;
       }
 
       .footer {
@@ -129,9 +144,9 @@
 
       .footer p {
         margin: 4px 0;
+        color: #94a3b8;
         font-size: 12px;
         line-height: 1.5;
-        color: #94a3b8;
       }
 
       .brand {
@@ -178,7 +193,8 @@
         <!-- Header -->
         <div class="header">
           <h1 class="logo">MediMeet</h1>
-          <p class="tagline">Online Healthcare & Doctor Consultation</p>
+
+          <p class="tagline">Online Healthcare &amp; Doctor Consultation</p>
         </div>
 
         <!-- Main Content -->
@@ -186,16 +202,15 @@
           <h2 class="greeting">Hello <%= name %>,</h2>
 
           <p class="message">
-            We received a request to reset the password for your MediMeet
-            account. Use the One-Time Password (OTP) below to continue with your
-            password reset.
+            Welcome to MediMeet! To complete your registration and verify your
+            email address, please use the One-Time Password (OTP) below.
           </p>
 
           <!-- OTP -->
           <div class="otp-box">
             <p class="otp-label">Your Verification Code</p>
 
-            <p class="otp"><%= otp %></p>
+            <p class="otp"><%= otpValue %></p>
 
             <p class="expiry">
               This OTP will expire in
@@ -203,12 +218,20 @@
             </p>
           </div>
 
+          <!-- Email Information -->
+          <div class="email-info">
+            <p>
+              Verification email sent to:
+              <strong><%= email %></strong>
+            </p>
+          </div>
+
           <!-- Security Notice -->
           <div class="security-box">
             <p>
               <strong>Security Notice:</strong>
-              If you did not request a password reset, please ignore this email.
-              Never share this OTP with anyone.
+              Never share this verification code with anyone. If you did not
+              create a MediMeet account, you can safely ignore this email.
             </p>
           </div>
         </div>

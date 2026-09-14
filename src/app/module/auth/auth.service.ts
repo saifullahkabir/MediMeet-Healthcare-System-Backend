@@ -1,3 +1,5 @@
+import { OptionalFlat } from "./../../../generated/prisma/internal/prismaNamespace";
+import { email } from "zod";
 import bcrypt from "bcryptjs";
 import type { JwtPayload, SignOptions } from "jsonwebtoken";
 import {
@@ -38,7 +40,66 @@ const registerPatient = async (payload: IRegisterPatientPayload) => {
 
   const hashedPassword = await bcrypt.hash(password, config.bcrypt_salt_rounds);
 
-  const createdUser = await prisma.user.create({
+  //* otp save in redis
+
+  const otpValue = crypto.randomInt(100000, 1000000).toString();
+  const otpKey = `patient-registration-otp:${email}`;
+
+  const expirationSeconds = 60 * 5;
+
+  await redisClient.set(otpKey, otpValue, {
+    expiration: {
+      type: "EX",
+      value: expirationSeconds,
+    },
+  });
+
+  //* registration data save in redis
+
+  const patientRegistrationKey = `patient-registration-data:${email}`;
+  const redisUserDataPayload = {
+    name,
+    email,
+    password: hashedPassword,
+    patient: patientData,
+  };
+
+  await redisClient.set(
+    patientRegistrationKey,
+    JSON.stringify(redisUserDataPayload),
+    {
+      expiration: {
+        type: "EX",
+        value: expirationSeconds,
+      },
+    },
+  );
+
+  //* send email for registration user otp
+
+  const templatePath = path.join(
+    process.cwd(),
+    "src/app/templates/registration-user-otp.ejs",
+  );
+
+  const templateData = {
+    name,
+    email,
+    otpValue,
+    expirationMinutes: expirationSeconds / 60,
+  };
+
+  const html = await ejs.renderFile(templatePath, templateData);
+
+  await transporter.sendMail({
+    from: config.email_sender,
+    to: email,
+    subject: "Email Verification",
+    html,
+  });
+
+  /**
+   * const createdUser = await prisma.user.create({
     data: {
       name,
       email,
@@ -80,6 +141,7 @@ const registerPatient = async (payload: IRegisterPatientPayload) => {
     accessToken,
     refreshToken,
   };
+   */
 };
 
 const loginUser = async (payload: ILoginUserPayload) => {
@@ -372,12 +434,12 @@ const forgotPassword = async (payload: IForgotPasswordPayload) => {
   const otp = crypto.randomInt(100000, 1000000).toString();
   const key = `forgot-password-otp:${isUserExist.email}`;
 
-  const expriationSeconds = 60 * 5;
+  const expirationSeconds = 60 * 5;
 
   await redisClient.set(key, otp, {
     expiration: {
       type: "EX",
-      value: expriationSeconds,
+      value: expirationSeconds,
     },
   });
 
@@ -389,7 +451,7 @@ const forgotPassword = async (payload: IForgotPasswordPayload) => {
   const templateData = {
     name: isUserExist.name,
     otp,
-    expriationMinutes: expriationSeconds / 60,
+    expirationMinutes: expirationSeconds / 60,
   };
 
   const html = await ejs.renderFile(templatePath, templateData);
