@@ -413,6 +413,25 @@ const googleLogin = async (payload: IGoogleLoginPayload) => {
             },
           },
         });
+
+        // Welcome email sender
+        const templatePath = path.join(
+          process.cwd(),
+          "src/app/templates/patient-welcome-email.ejs",
+        );
+
+        const templateData = {
+          name: user.name,
+        };
+
+        const html = await ejs.renderFile(templatePath, templateData);
+
+        await transporter.sendMail({
+          from: config.email_sender,
+          to: user.email,
+          subject: "Welcome to MediMeet Healthcare System",
+          html,
+        });
       }
     }
 
