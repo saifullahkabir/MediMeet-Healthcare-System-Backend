@@ -156,6 +156,24 @@ const verifyPatientEmail = async (payload: IVerifyEmailPayload) => {
 
   await redisClient.del(patientRegistrationKey);
 
+  const templatePath = path.join(
+    process.cwd(),
+    "src/app/templates/patient-welcome-email.ejs",
+  );
+
+  const templateData = {
+    name: createdUser.name,
+  };
+
+  const html = await ejs.renderFile(templatePath, templateData);
+
+  await transporter.sendMail({
+    from: config.email_sender,
+    to: email,
+    subject: "Welcome to MediMeet Healthcare System",
+    html,
+  });
+
   const { patient, ...user } = createdUser;
   const jwtPayload = {
     userId: user.id,

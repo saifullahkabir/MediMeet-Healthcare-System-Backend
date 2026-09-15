@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Welcome to MediMeet</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f4f7fb;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #1f2937;
+      }
+
+      .email-wrapper {
+        width: 100%;
+        padding: 40px 16px;
+      }
+
+      .email-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid #e5e7eb;
+      }
+
+      .header {
+        background-color: #0f766e;
+        padding: 30px 24px;
+        text-align: center;
+      }
+
+      .logo {
+        margin: 0;
+        color: #ffffff;
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+      }
+
+      .tagline {
+        margin: 7px 0 0;
+        color: #ccfbf1;
+        font-size: 13px;
+      }
+
+      .content {
+        padding: 40px 32px;
+        text-align: center;
+      }
+
+      .welcome-icon {
+        width: 68px;
+        height: 68px;
+        margin: 0 auto 24px;
+        border-radius: 50%;
+        background-color: #ccfbf1;
+        color: #0f766e;
+        font-size: 34px;
+        line-height: 68px;
+        font-weight: 700;
+      }
+
+      .title {
+        margin: 0 0 14px;
+        color: #111827;
+        font-size: 26px;
+        font-weight: 700;
+      }
+
+      .greeting {
+        margin: 0 0 18px;
+        color: #374151;
+        font-size: 16px;
+      }
+
+      .message {
+        max-width: 480px;
+        margin: 0 auto;
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.8;
+      }
+
+      .features {
+        margin: 30px auto 0;
+        padding: 20px;
+        max-width: 480px;
+        background-color: #f0fdfa;
+        border: 1px solid #ccfbf1;
+        border-radius: 10px;
+        text-align: left;
+      }
+
+      .features-title {
+        margin: 0 0 12px;
+        color: #115e59;
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .features ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+
+      .features li {
+        margin-bottom: 8px;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .features li:last-child {
+        margin-bottom: 0;
+      }
+
+      .closing-message {
+        max-width: 480px;
+        margin: 26px auto 0;
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      .footer {
+        padding: 22px 24px;
+        text-align: center;
+        background-color: #f8fafc;
+        border-top: 1px solid #e5e7eb;
+      }
+
+      .footer p {
+        margin: 4px 0;
+        color: #94a3b8;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .brand {
+        color: #0f766e;
+        font-weight: 600;
+      }
+
+      @media only screen and (max-width: 600px) {
+        .email-wrapper {
+          padding: 20px 10px;
+        }
+
+        .header {
+          padding: 24px 16px;
+        }
+
+        .content {
+          padding: 32px 20px;
+        }
+
+        .logo {
+          font-size: 25px;
+        }
+
+        .title {
+          font-size: 22px;
+        }
+
+        .message,
+        .closing-message {
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="email-wrapper">
+      <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+          <h1 class="logo">MediMeet</h1>
+
+          <p class="tagline">Online Healthcare &amp; Doctor Consultation</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+          <!-- Welcome Icon -->
+          <div class="welcome-icon">✓</div>
+
+          <h2 class="title">Welcome to MediMeet!</h2>
+
+          <p class="greeting">Hello <strong><%= name %></strong>,</p>
+
+          <p class="message">
+            Welcome to MediMeet Healthcare System. Your patient account has been
+            successfully created, and we're happy to have you with us.
+          </p>
+
+          <!-- Features -->
+          <div class="features">
+            <p class="features-title">With MediMeet, you can:</p>
+
+            <ul>
+              <li>Find and consult with healthcare professionals.</li>
+              <li>Manage your healthcare appointments.</li>
+              <li>Access your patient information securely.</li>
+              <li>Get a convenient and reliable healthcare experience.</li>
+            </ul>
+          </div>
+
+          <p class="closing-message">
+            Thank you for choosing MediMeet. We look forward to supporting you
+            on your healthcare journey.
+          </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+          <p>
+            This is an automated email from
+            <span class="brand">MediMeet</span>.
+          </p>
+
+          <p>Please do not reply to this email.</p>
+
+          <p>
+            &copy; <%= new Date().getFullYear() %> MediMeet. All rights
+            reserved.
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
