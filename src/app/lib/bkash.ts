@@ -9,9 +9,24 @@ export const getBkashIdToken = async () => {
     let bkashIdToken = await redisClient.get(IdTokenKey);
     const bkashIdTokenTTL = await redisClient.ttl(IdTokenKey);
 
-    let bkashRefreshToken = await redisClient.get(RefreshTokenKey);
+    const bkashRefreshToken = await redisClient.get(RefreshTokenKey);
+    const bkashRefreshTokenTTL = await redisClient.ttl(RefreshTokenKey);
 
-    if (bkashIdTokenTTL <= 600 && bkashRefreshToken) {
+    console.log({
+      bkashIdToken,
+      bkashIdTokenTTL,
+      bkashRefreshToken,
+      bkashRefreshTokenTTL,
+    });
+
+    //* bkash id token remaining time is less than or equal 10 minutes or bkash id token expired
+    //* bkash refresh token must exist
+    //* bkash refresh token remaining is more than 10 minutes
+    if (
+      (bkashIdTokenTTL <= 600 || !bkashIdToken) &&
+      bkashRefreshToken &&
+      bkashRefreshTokenTTL > 600
+    ) {
       const refreshTokenResponse = await fetch(
         `${config.bkash_base_url}/tokenized/checkout/token/refresh`,
         {
@@ -30,6 +45,10 @@ export const getBkashIdToken = async () => {
         },
       );
 
+      if (!refreshTokenResponse.ok) {
+        throw new Error("Bkash access token grant failed");
+      }
+
       const bkashRefreshTokenResult = await refreshTokenResponse.json();
 
       bkashIdToken = bkashRefreshTokenResult.id_token as string;
@@ -44,7 +63,7 @@ export const getBkashIdToken = async () => {
       return bkashIdToken;
     }
 
-    if (bkashIdToken) {
+    if (bkashIdTokenTTL > 600) {
       return bkashIdToken;
     }
 
@@ -64,6 +83,10 @@ export const getBkashIdToken = async () => {
         }),
       },
     );
+
+    if (!response.ok) {
+      throw new Error("Bkash access token grant failed");
+    }
 
     const result = await response.json();
 
@@ -85,7 +108,7 @@ export const getBkashIdToken = async () => {
 
     bkashIdToken = result.id_token;
 
-    return result.bkashIdToken;
+    return bkashIdToken;
   } catch (error) {
     throw error instanceof Error ? error : new Error(String(error));
     // console.log(error);

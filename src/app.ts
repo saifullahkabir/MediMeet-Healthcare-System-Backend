@@ -39,7 +39,7 @@ app.get("/test", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const grantIdTokenResult = await getBkashIdToken();
 
-    console.log(grantIdTokenResult);
+    console.log("result by app.ts test route=>", grantIdTokenResult);
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
