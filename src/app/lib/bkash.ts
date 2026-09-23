@@ -12,12 +12,12 @@ export const getBkashIdToken = async () => {
     const bkashRefreshToken = await redisClient.get(RefreshTokenKey);
     const bkashRefreshTokenTTL = await redisClient.ttl(RefreshTokenKey);
 
-    // console.log({
-    //   bkashIdToken,
-    //   bkashIdTokenTTL,
-    //   bkashRefreshToken,
-    //   bkashRefreshTokenTTL,
-    // });
+    console.log({
+      bkashIdToken,
+      bkashIdTokenTTL,
+      bkashRefreshToken,
+      bkashRefreshTokenTTL,
+    });
 
     //* bkash id token remaining time is less than or equal 10 minutes or bkash id token expired
     //* bkash refresh token must exist
@@ -46,7 +46,9 @@ export const getBkashIdToken = async () => {
       );
 
       if (!refreshTokenResponse.ok) {
-        throw new Error("Bkash access token grant failed");
+        throw new Error(
+          `Bkash access token grant failed: ${refreshTokenResponse.status} ${refreshTokenResponse.statusText}`,
+        );
       }
 
       const bkashRefreshTokenResult = await refreshTokenResponse.json();
@@ -85,7 +87,9 @@ export const getBkashIdToken = async () => {
     );
 
     if (!response.ok) {
-      throw new Error("Bkash access token grant failed");
+      throw new Error(
+        `Bkash access token grant failed: ${response.status} ${response.statusText}`,
+      );
     }
 
     const result = await response.json();

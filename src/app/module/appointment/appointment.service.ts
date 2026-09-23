@@ -8,8 +8,6 @@ const bookAppointment = async () => {
     throw new Error("Bkash access token not found!");
   }
 
-  console.log("bkash payment id", { bkashIdToken });
-
   const bkashCreatePaymentResponse = await fetch(
     `${config.bkash_base_url}/tokenized/checkout/create`,
     {
@@ -37,7 +35,7 @@ const bookAppointment = async () => {
 
   const bkashCreatePaymentResult = await bkashCreatePaymentResponse.json();
 
-  console.log({ bkashCreatePaymentResult });
+  // console.log({ bkashCreatePaymentResult });
 
   return bkashCreatePaymentResult;
 };
@@ -78,7 +76,31 @@ const bookAppointmentCallback = async (query: Record<string, unknown>) => {
 
   const executedPaymentResult = await executedPaymentResponse.json();
 
-  return executedPaymentResult;
+  if (status === "success") {
+    return {
+      executedPaymentResult,
+      redirectUrl: `${config.frontend_url}/dashboard/my-appointments?status=success`,
+    };
+  }
+
+  if (status === "failure") {
+    return {
+      executedPaymentResult,
+      redirectUrl: `${config.frontend_url}/dashboard/my-appointments?status=failure`,
+    };
+  }
+
+  if (status === "cancel") {
+    return {
+      executedPaymentResult,
+      redirectUrl: `${config.frontend_url}/dashboard/my-appointments?status=cancel`,
+    };
+  }
+
+  return {
+    executedPaymentResult,
+    redirectUrl: `${config.frontend_url}/dashboard/my-appointments`,
+  };
 };
 
 export const AppointmentService = {
