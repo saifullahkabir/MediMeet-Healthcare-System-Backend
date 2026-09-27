@@ -7,11 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": [
-      "**",
-      "!src/generated",
-      "!src/app/templates"
-    ]
+    "includes": ["**", "!src/generated", "!src/app/templates"]
   },
   "formatter": {
     "enabled": true,
@@ -29,9 +25,11 @@
       },
       "style": {
         "noNonNullAssertion": "off"
+      },
+      "correctness": {
+        "noUnusedFunctionParameters": "off"
       }
     }
-   
   },
   "javascript": {
     "formatter": {
