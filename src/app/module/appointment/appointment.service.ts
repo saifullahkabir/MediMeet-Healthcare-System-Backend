@@ -249,7 +249,7 @@ const bookAppointmentCallback = async (query: Record<string, unknown>) => {
   return transactionResult;
 };
 
-const cancelAppointment = async (payload: any, user: RequestUser) => {
+const cancelAppointment = async (payload: any) => {
   const transactionResult = await prisma.$transaction(async (tx) => {
     const { appointmentId } = payload;
 
@@ -307,12 +307,15 @@ const cancelAppointment = async (payload: any, user: RequestUser) => {
           paymentId: existingAppointment.payment?.bkashPaymentId,
           trxId: existingAppointment.payment?.bkashTrxId,
           refundAmount: existingAppointment.payment?.amount,
+          sku: "Appointment Cancellation",
           reason: "Patient cancelled the appointment",
         }),
       },
     );
 
     const bkashRefundPaymentResult = await bkashRefundPaymentResponse.json();
+
+    console.log(bkashRefundPaymentResult);
 
     //* 3. update payment
     const updatedPayment = await tx.payment.update({
@@ -324,6 +327,8 @@ const cancelAppointment = async (payload: any, user: RequestUser) => {
         refundAmount: bkashRefundPaymentResult.refundAmount,
         refundedAt: bkashRefundPaymentResult.completedTime,
         refundReason: bkashRefundPaymentResult.reason,
+        status: PaymentStatus.REFUNDED,
+        gatewayResponse: bkashRefundPaymentResult,
       },
     });
 
@@ -340,5 +345,5 @@ export const AppointmentService = {
   bookAppointment,
   payAppointment,
   bookAppointmentCallback,
-  cancelAppointment
+  cancelAppointment,
 };
