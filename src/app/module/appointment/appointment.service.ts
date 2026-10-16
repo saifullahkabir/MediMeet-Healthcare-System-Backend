@@ -9,7 +9,7 @@ import type { RequestUser } from "../../middleware/checkAuth";
 
 const bookAppointment = async (payload: any, user: RequestUser) => {
   const transactionResult = await prisma.$transaction(async (tx) => {
-    //* 3. appointment create
+    //* 1. appointment create
     const appointment = await tx.appointment.create({
       data: {
         status: AppointmentStatus.PENDING,
@@ -293,7 +293,7 @@ const cancelAppointment = async (payload: any) => {
     }
 
     const bkashRefundPaymentResponse = await fetch(
-      `${config.bkash_base_url}/v2/tokenized-checkout/refund/payment/transaction`,
+      `${config.bkash_base_url}/tokenized/checkout/payment/refund`,
       {
         method: "POST",
         headers: {
@@ -304,9 +304,9 @@ const cancelAppointment = async (payload: any) => {
         },
 
         body: JSON.stringify({
-          paymentId: existingAppointment.payment?.bkashPaymentId,
-          trxId: existingAppointment.payment?.bkashTrxId,
-          refundAmount: existingAppointment.payment?.amount,
+          paymentID: existingAppointment.payment?.bkashPaymentId,
+          trxID: existingAppointment.payment?.bkashTrxId,
+          amount: existingAppointment.payment?.amount.toString(),
           sku: "Appointment Cancellation",
           reason: "Patient cancelled the appointment",
         }),
@@ -315,7 +315,7 @@ const cancelAppointment = async (payload: any) => {
 
     const bkashRefundPaymentResult = await bkashRefundPaymentResponse.json();
 
-    console.log(bkashRefundPaymentResult);
+    console.log({ bkashRefundPaymentResult });
 
     //* 3. update payment
     const updatedPayment = await tx.payment.update({
@@ -323,10 +323,10 @@ const cancelAppointment = async (payload: any) => {
         appointmentId: existingAppointment.id,
       },
       data: {
-        refundTrxId: bkashRefundPaymentResult.refundTrxId,
-        refundAmount: bkashRefundPaymentResult.refundAmount,
+        refundTrxId: bkashRefundPaymentResult.refundTrxID,
+        refundAmount: bkashRefundPaymentResult.amount,
         refundedAt: bkashRefundPaymentResult.completedTime,
-        refundReason: bkashRefundPaymentResult.reason,
+        refundReason: "Patient cancelled the appointment",
         status: PaymentStatus.REFUNDED,
         gatewayResponse: bkashRefundPaymentResult,
       },
