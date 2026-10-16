@@ -18,7 +18,7 @@ model Doctor {
     verificationStatus DoctorVerificationStatus @default(PENDING)
     rejectionReason    String?
     reviewedBy         String?
-    reviewedAt         DateTime
+    reviewedAt         DateTime?
 
     resume          String?
     additionalFiles String[]
