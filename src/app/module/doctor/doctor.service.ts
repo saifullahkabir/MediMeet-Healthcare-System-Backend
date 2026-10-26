@@ -5,6 +5,11 @@ import { cloudinary } from "../../lib/cloudinary";
 import { Role } from "../../../generated/prisma/enums";
 import bcrypt from "bcryptjs";
 import config from "../../config";
+import crypto from "node:crypto";
+import { redisClient } from "../../lib/redis";
+import path from "node:path";
+import { transporter } from "../../lib/nodemailer";
+import ejs from "ejs";
 
 const applyAsDoctor = async (
   payload: ApplyAsDoctorPayload,
@@ -112,6 +117,42 @@ const applyAsDoctor = async (
     omit: {
       password: true,
     },
+  });
+
+  // 6. Create OTP & set in the redis
+
+  const expirationSeconds = 60 * 60; // 1 hour
+
+  const otpKey = `doctor-application:otp:${payload.user.email}`;
+  const otpValue = crypto.randomInt(100000, 1000000).toString();
+
+  await redisClient.set(otpKey, otpValue, {
+    expiration: {
+      type: "EX",
+      value: expirationSeconds,
+    },
+  });
+
+  // 7. Send otp to the email
+  const templatePath = path.join(
+    process.cwd(),
+    "src/app/templates/registration-user-otp.ejs",
+  );
+
+  const templateData = {
+    name: payload.user.name,
+    email: payload.user.email,
+    otpValue,
+    expirationMinutes: expirationSeconds / 60,
+  };
+
+  const html = await ejs.renderFile(templatePath, templateData);
+
+  await transporter.sendMail({
+    from: config.email_sender,
+    to: payload.user.email,
+    subject: "Doctor Application - Email Verification",
+    html,
   });
 
   return doctorApplication;
