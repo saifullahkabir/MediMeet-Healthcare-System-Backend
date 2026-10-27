@@ -1,3 +1,5 @@
+import { email, string } from "zod";
+
 export interface ApplyAsDoctorPayload {
   user: {
     name: string;
@@ -16,4 +18,9 @@ export interface ApplyAsDoctorPayload {
     consultationFee?: number;
     contactNumber?: string;
   };
+}
+
+export interface VerifyDoctorEmailPayload {
+  email: string;
+  otp: string;
 }
