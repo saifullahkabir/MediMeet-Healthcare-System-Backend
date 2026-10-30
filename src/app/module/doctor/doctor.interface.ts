@@ -1,4 +1,5 @@
 import { email, string } from "zod";
+import { DoctorVerificationStatus } from "../../../generated/prisma/enums";
 
 export interface ApplyAsDoctorPayload {
   user: {
@@ -23,4 +24,10 @@ export interface ApplyAsDoctorPayload {
 export interface VerifyDoctorEmailPayload {
   email: string;
   otp: string;
+}
+
+export interface ApproveDoctorPayload {
+  doctorId: string;
+  verificationStatus: DoctorVerificationStatus;
+  rejectionReason: string;
 }

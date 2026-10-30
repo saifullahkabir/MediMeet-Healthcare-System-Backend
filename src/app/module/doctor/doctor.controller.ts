@@ -4,6 +4,7 @@ import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { DoctorService } from "./doctor.service";
 import { applyAsDoctorValidationSchema } from "./doctor.validation";
+import type { RequestUser } from "../../middleware/checkAuth";
 
 const applyAsDoctor = catchAsync(async (req: Request, res: Response) => {
   const files = req.files as { [fieldname: string]: Express.Multer.File[] };
@@ -45,7 +46,20 @@ const verifyDoctorEmail = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const approveDoctor = catchAsync(async (req: Request, res: Response) => {
+  const reviewer = req.user as RequestUser;
+  const result = await DoctorService.approveDoctor(req.body, reviewer);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Doctor approve successfully",
+    data: result,
+  });
+});
+
 export const DoctorController = {
   applyAsDoctor,
   verifyDoctorEmail,
+  approveDoctor,
 };
