@@ -1,0 +1,247 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>MediMeet - Doctor Application Approved</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f4f7fb;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #1f2937;
+      }
+
+      .email-wrapper {
+        width: 100%;
+        padding: 40px 16px;
+      }
+
+      .email-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid #e5e7eb;
+      }
+
+      .header {
+        background-color: #0f766e;
+        padding: 28px 24px;
+        text-align: center;
+      }
+
+      .logo {
+        margin: 0;
+        color: #ffffff;
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+      }
+
+      .tagline {
+        margin: 6px 0 0;
+        color: #ccfbf1;
+        font-size: 13px;
+      }
+
+      .content {
+        padding: 36px 32px;
+      }
+
+      .greeting {
+        margin: 0 0 16px;
+        color: #111827;
+        font-size: 20px;
+        font-weight: 600;
+      }
+
+      .message {
+        margin: 0 0 24px;
+        color: #4b5563;
+        font-size: 15px;
+        line-height: 1.7;
+      }
+
+      .status-box {
+        margin: 28px 0;
+        padding: 24px;
+        text-align: center;
+        background-color: #f0fdfa;
+        border: 1px solid #99f6e4;
+        border-radius: 12px;
+      }
+
+      .status-label {
+        margin: 0 0 10px;
+        color: #64748b;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .status {
+        margin: 0;
+        color: #0f766e;
+        font-size: 26px;
+        font-weight: 700;
+      }
+
+      .status-description {
+        margin: 14px 0 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .info-box {
+        margin: 24px 0 0;
+        padding: 16px;
+        background-color: #f8fafc;
+        border-radius: 8px;
+      }
+
+      .info-box p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.7;
+      }
+
+      .security-box {
+        margin-top: 24px;
+        padding: 16px;
+        background-color: #f8fafc;
+        border-left: 4px solid #0f766e;
+        border-radius: 6px;
+      }
+
+      .security-box p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .footer {
+        padding: 22px 24px;
+        text-align: center;
+        background-color: #f8fafc;
+        border-top: 1px solid #e5e7eb;
+      }
+
+      .footer p {
+        margin: 4px 0;
+        color: #94a3b8;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .brand {
+        color: #0f766e;
+        font-weight: 600;
+      }
+
+      @media only screen and (max-width: 600px) {
+        .email-wrapper {
+          padding: 20px 10px;
+        }
+
+        .content {
+          padding: 28px 20px;
+        }
+
+        .header {
+          padding: 24px 16px;
+        }
+
+        .logo {
+          font-size: 24px;
+        }
+
+        .greeting {
+          font-size: 18px;
+        }
+
+        .message {
+          font-size: 14px;
+        }
+
+        .status {
+          font-size: 23px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="email-wrapper">
+      <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+          <h1 class="logo">MediMeet</h1>
+          <p class="tagline">Online Healthcare &amp; Doctor Consultation</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+          <h2 class="greeting">Hello <%= name %>,</h2>
+
+          <p class="message">
+            Congratulations! We are pleased to inform you that your doctor
+            application has been successfully reviewed and approved by the
+            MediMeet administration team.
+          </p>
+
+          <!-- Approval Status -->
+          <div class="status-box">
+            <p class="status-label">Application Status</p>
+
+            <p class="status">APPROVED</p>
+
+            <p class="status-description">
+              Your application has been verified and approved. Welcome to the
+              MediMeet healthcare professional community!
+            </p>
+          </div>
+
+          <!-- Information -->
+          <div class="info-box">
+            <p>
+              You can now proceed with the next steps to access your doctor
+              account. Please log in using your registered email address and
+              follow the instructions provided by MediMeet.
+            </p>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+          <p>
+            This is an automated email from
+            <span class="brand">MediMeet</span>.
+          </p>
+
+          <p>Please do not reply to this email.</p>
+
+          <p>
+            &copy; <%= new Date().getFullYear() %> MediMeet. All rights
+            reserved.
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+```

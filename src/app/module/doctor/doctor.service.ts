@@ -288,7 +288,7 @@ const approveDoctor = async (
 
   const templateData = {
     name: updatedDoctor.name,
-    reason: updatedDoctor.rejectionReason,
+    reason: updatedDoctor.rejectionReason ?? "No reason provided.",
   };
 
   const html = await ejs.renderFile(templatePath, templateData);

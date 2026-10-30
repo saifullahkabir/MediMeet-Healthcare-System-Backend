@@ -22,7 +22,7 @@ router.post(
 router.post(
   "/approve-doctor",
   auth(Role.ADMIN, Role.SUPER_ADMIN),
-  DoctorController.verifyDoctorEmail,
+  DoctorController.approveDoctor,
 );
 
 export const DoctorRoutes = router;
