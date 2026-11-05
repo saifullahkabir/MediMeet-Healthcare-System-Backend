@@ -13,7 +13,7 @@ model Doctor {
     bio             String?
     consultationFee Decimal? @db.Decimal(10, 2)
 
-    contactNumber String?
+    contactNumber String? 
 
     verificationStatus DoctorVerificationStatus @default(PENDING)
     rejectionReason    String?
