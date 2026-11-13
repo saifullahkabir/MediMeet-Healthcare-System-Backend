@@ -1,3 +1,5 @@
+import httpStatus from "http-status";
+import { AppError } from "../../utils/AppError";
 import type { UploadApiResponse } from "cloudinary";
 import { cloudinary } from "../../lib/cloudinary";
 import { prisma } from "../../lib/prisma";
@@ -26,7 +28,12 @@ const uploadProfileImage = async (buffer: Buffer, userId: string) => {
             }
 
             if (!result) {
-              return reject(new Error("No result returned from Cloudinary"));
+              return reject(
+                new AppError(
+                  httpStatus.INTERNAL_SERVER_ERROR,
+                  "No result returned from Cloudinary",
+                ),
+              );
             }
 
             resolve(result);

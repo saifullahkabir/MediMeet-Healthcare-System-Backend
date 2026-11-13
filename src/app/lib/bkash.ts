@@ -1,3 +1,5 @@
+import httpStatus from "http-status";
+import { AppError } from "../utils/AppError";
 import config from "../config";
 import { redisClient } from "./redis";
 
@@ -46,7 +48,8 @@ export const getBkashIdToken = async () => {
       );
 
       if (!refreshTokenResponse.ok) {
-        throw new Error(
+        throw new AppError(
+          httpStatus.BAD_GATEWAY,
           `Bkash access token grant failed: ${refreshTokenResponse.status} ${refreshTokenResponse.statusText}`,
         );
       }
@@ -87,7 +90,8 @@ export const getBkashIdToken = async () => {
     );
 
     if (!response.ok) {
-      throw new Error(
+      throw new AppError(
+        httpStatus.BAD_GATEWAY,
         `Bkash access token grant failed: ${response.status} ${response.statusText}`,
       );
     }
@@ -114,7 +118,12 @@ export const getBkashIdToken = async () => {
 
     return bkashIdToken;
   } catch (error) {
-    throw error instanceof Error ? error : new Error(String(error));
+    throw error instanceof AppError
+      ? error
+      : new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          error instanceof Error ? error.message : String(error),
+        );
     // console.log(error);
   }
 };
