@@ -4,9 +4,9 @@ import { AppError } from "../../utils/AppError";
 import type { RequestUser } from "./../../middleware/checkAuth";
 import type { ICreateSchedulePayload } from "./schedule.interface";
 import { addDays, differenceInMinutes, startOfDay } from "date-fns";
-import { IQuery } from "../../interfaces";
-import { ScheduleWhereInput } from "../../../generated/prisma/models";
-import { ScheduleStatus } from "../../../generated/prisma/enums";
+import type { IQuery } from "../../interfaces";
+import type { ScheduleWhereInput } from "../../../generated/prisma/models";
+import type { ScheduleStatus } from "../../../generated/prisma/enums";
 
 const createSchedule = async (
   payload: ICreateSchedulePayload,
@@ -87,7 +87,6 @@ const getMySchedules = async (query: IQuery, user: RequestUser) => {
     throw new AppError(httpStatus.CONFLICT, "Doctor profile not found");
   }
 
-  // pagination
   const limit = query.limit ? Number(query.limit) : 9;
   const page = query.page ? Number(query.page) : 1;
   const skip = (page - 1) * limit;
@@ -102,6 +101,22 @@ const getMySchedules = async (query: IQuery, user: RequestUser) => {
       isDeleted: false,
     },
   ];
+
+  if (query.email) {
+    andConditions.push({
+      doctor: {
+        email: query.email,
+      },
+    });
+  }
+
+  if (query.contactNumber) {
+    andConditions.push({
+      doctor: {
+        contactNumber: query.contactNumber,
+      },
+    });
+  }
 
   if (query.status) {
     andConditions.push({ status: query.status as ScheduleStatus });
@@ -136,9 +151,96 @@ const getMySchedules = async (query: IQuery, user: RequestUser) => {
   return {
     data: schedule,
     meta: {
-      page: page,
-      limit: limit,
-      total: total,
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
+};
+
+const getAllSchedules = async (query: IQuery) => {
+  const limit = query.limit ? Number(query.limit) : 9;
+  const page = query.page ? Number(query.page) : 1;
+  const skip = (page - 1) * limit;
+  const sortBy = query.sortBy ? query.sortBy : "createdAt";
+  const sortOrder = query.sortOrder ? query.sortOrder : "desc";
+
+  const andConditions: ScheduleWhereInput[] = [];
+
+  if (query.searchTerm) {
+    andConditions.push({
+      doctor: {
+        OR: [
+          { name: { contains: query.searchTerm, mode: "insensitive" } },
+          { email: { contains: query.searchTerm, mode: "insensitive" } },
+          {
+            specialization: { contains: query.searchTerm, mode: "insensitive" },
+          },
+          {
+            contactNumber: { contains: query.searchTerm, mode: "insensitive" },
+          },
+        ],
+      },
+    });
+  }
+
+  if (query.doctorId) {
+    andConditions.push({ doctorId: query.doctorId });
+  }
+
+  if (query.email) {
+    andConditions.push({
+      doctor: {
+        email: query.email,
+      },
+    });
+  }
+
+  if (query.contactNumber) {
+    andConditions.push({
+      doctor: {
+        contactNumber: query.contactNumber,
+      },
+    });
+  }
+
+  if (query.status) {
+    andConditions.push({ status: query.status as ScheduleStatus });
+  }
+
+  const schedule = await prisma.schedule.findMany({
+    where: {
+      AND: andConditions,
+    },
+
+    take: limit,
+    skip: skip,
+
+    orderBy: {
+      // sortBy : sortOrder
+      [sortBy]: sortOrder,
+    },
+
+    include: {
+      appointments: {
+        include: {
+          patient: true,
+        },
+      },
+    },
+  });
+
+  const total = await prisma.schedule.count({
+    where: { AND: andConditions },
+  });
+
+  return {
+    data: schedule,
+    meta: {
+      page,
+      limit,
+      total,
       totalPages: Math.ceil(total / limit),
     },
   };
@@ -147,4 +249,5 @@ const getMySchedules = async (query: IQuery, user: RequestUser) => {
 export const ScheduleService = {
   createSchedule,
   getMySchedules,
+  getAllSchedules
 };
