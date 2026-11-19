@@ -102,22 +102,6 @@ const getMySchedules = async (query: IQuery, user: RequestUser) => {
     },
   ];
 
-  if (query.email) {
-    andConditions.push({
-      doctor: {
-        email: query.email,
-      },
-    });
-  }
-
-  if (query.contactNumber) {
-    andConditions.push({
-      doctor: {
-        contactNumber: query.contactNumber,
-      },
-    });
-  }
-
   if (query.status) {
     andConditions.push({ status: query.status as ScheduleStatus });
   }
@@ -249,5 +233,5 @@ const getAllSchedules = async (query: IQuery) => {
 export const ScheduleService = {
   createSchedule,
   getMySchedules,
-  getAllSchedules
+  getAllSchedules,
 };
