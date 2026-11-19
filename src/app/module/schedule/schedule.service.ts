@@ -230,6 +230,39 @@ const getAllSchedules = async (query: IQuery) => {
   };
 };
 
+const getScheduleById = async (scheduleId: string) => {
+  const schedule = await prisma.schedule.findUnique({
+    where: {
+      id: scheduleId,
+    },
+    include: {
+      doctor: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          contactNumber: true,
+          specialization: true,
+          userId: true,
+          experienceYears: true,
+          consultationFee: true,
+        },
+      },
+      appointments: {
+        include: {
+          patient: true,
+        },
+      },
+    },
+  });
+
+  if (!schedule || schedule.isDeleted) {
+    throw new AppError(httpStatus.NOT_FOUND, "Schedule not found");
+  }
+
+  return schedule;
+};
+
 export const ScheduleService = {
   createSchedule,
   getMySchedules,
