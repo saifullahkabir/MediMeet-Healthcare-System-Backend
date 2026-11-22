@@ -27,7 +27,8 @@
         "noNonNullAssertion": "off"
       },
       "correctness": {
-        "noUnusedFunctionParameters": "off"
+        "noUnusedFunctionParameters": "off",
+        "noUnusedVariables": "off"
       }
     }
   },
